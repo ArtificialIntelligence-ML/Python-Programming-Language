@@ -1,0 +1,78 @@
+import unittest
+from datetime import datetime
+from your_module import is_odd_minute
+
+class TestIsOddMinute(unittest.TestCase):
+    def test_odd_minute(self):
+        # Define a list of odd minutes to test against
+        odd_minutes = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59]
+        
+        # Mocking the current minute to be each minute in the list of odd minutes
+        for minute in odd_minutes:
+            class MockDatetime:
+                @classmethod
+                def today(cls):
+                    return datetime(datetime.today().year, datetime.today().month, datetime.today().day, datetime.today().hour, minute)
+
+            # Patching datetime to use our MockDatetime
+            with unittest.mock.patch('your_module.datetime', MockDatetime):
+                self.assertEqual(is_odd_minute(), True, f"Failed for minute {minute}")
+    
+    def test_even_minute(self):
+        # Define a list of even minutes to test against
+        even_minutes = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58]
+
+        # Mocking the current minute to be each minute in the list of even minutes
+        for minute in even_minutes:
+            class MockDatetime:
+                @classmethod
+                def today(cls):
+                    return datetime(datetime.today().year, datetime.today().month, datetime.today().day, datetime.today().hour, minute)
+
+            # Patching datetime to use our MockDatetime
+            with unittest.mock.patch('your_module.datetime', MockDatetime):
+                self.assertEqual(is_odd_minute(), False, f"Failed for minute {minute}")
+
+if __name__ == '__main__':
+    unittest.main()
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+# test_my_script.py
+
+import unittest
+from io import StringIO
+import sys
+from datetime import datetime
+from unittest.mock import patch  # Import patch directly from unittest.mock
+
+
+class TestMyScript(unittest.TestCase):
+    def test_output(self):
+        # Redirect stdout
+        captured_output = StringIO()
+        sys.stdout = captured_output
+
+        # Mocking the current minute to be an odd minute (1)
+        class MockDatetime:
+            @classmethod
+            def today(cls):
+                return datetime(datetime.today().year, datetime.today().month, datetime.today().day, datetime.today().hour, 1)
+
+        with unittest.mock.patch('exercise.datetime', MockDatetime):
+            import exercise  # Import here to execute the script
+
+        # Reset stdout
+        sys.stdout = sys.__stdout__
+
+        # Get printed output
+        printed_output = captured_output.getvalue().strip()
+        
+        # Assert output
+        self.assertEqual(printed_output, "Odd minute")
+
+if __name__ == '__main__':
+    unittest.main()
+
